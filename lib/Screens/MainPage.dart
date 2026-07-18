@@ -68,21 +68,30 @@ class _MainPageState extends State<MainPage> {
                         SizedBox(height: 40),
                         SizedBox(
                           height: 50,
-                          width: MediaQuery.of(context).size.width * 0.3,
-                          child: ElevatedButton(
+                          width: MediaQuery.of(context).size.width * 0.32,
+                          child: ElevatedButton.icon(
                             onPressed: () {
                               context.read<GrandTotalProvider>().clear();
                             },
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
+                            icon: const Icon(
+                              Icons.restart_alt_rounded,
+                              size: 22,
                             ),
-                            child: const Text(
+                            label: const Text(
                               "Reset",
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.grey.shade100,
+                              foregroundColor: Colors.blueGrey.shade700,
+                              elevation: 1,
+                              shadowColor: Colors.black12,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                                side: BorderSide(color: Colors.grey.shade300),
                               ),
                             ),
                           ),

@@ -27,6 +27,16 @@ class _DenominationWidgetState extends State<DenominationWidget> {
     "1_coin",
   ];
 
+  final Map<String, TextEditingController> _controllers = {};
+
+  @override
+  void dispose() {
+    for (var controller in _controllers.values) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -41,9 +51,19 @@ class _DenominationWidgetState extends State<DenominationWidget> {
           final key = notes[index];
           final denom = context.watch<GrandTotalProvider>().subTotals[key]!;
 
+          final textValue = denom.count == 0 ? "" : denom.count.toString();
+          final controller = _controllers.putIfAbsent(
+            key,
+            () => TextEditingController(),
+          );
+
+          if (controller.text != textValue) {
+            controller.text = textValue;
+          }
+
           return DenominationRow(
             label: "${denom.value}",
-            initialValue: denom.count == 0 ? "" : denom.count.toString(),
+            controller: controller,
             amount: denom.amount.toStringAsFixed(0),
             isNote: denom.isNote,
             onChanged: (text) {
@@ -61,7 +81,7 @@ class _DenominationWidgetState extends State<DenominationWidget> {
 
 class DenominationRow extends StatelessWidget {
   final String label;
-  final String initialValue;
+  final TextEditingController controller;
   final String amount;
   final bool isNote;
   final Function(String) onChanged;
@@ -69,7 +89,7 @@ class DenominationRow extends StatelessWidget {
   const DenominationRow({
     super.key,
     required this.label,
-    required this.initialValue,
+    required this.controller,
     required this.amount,
     required this.isNote,
     required this.onChanged,
@@ -107,7 +127,7 @@ class DenominationRow extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 16),
-        Expanded(child: _field(initialValue, "Count", true, onChanged)),
+        Expanded(child: _field(controller, "Count", onChanged)),
         const SizedBox(width: 12),
         Expanded(
           child: Container(
@@ -128,16 +148,14 @@ class DenominationRow extends StatelessWidget {
   }
 
   Widget _field(
-    String initialValue,
+    TextEditingController controller,
     String hint,
-    bool isEnabled,
     Function(String) onChanged,
   ) {
     return SizedBox(
       height: 50,
       child: TextFormField(
-        initialValue: initialValue,
-        enabled: isEnabled,
+        controller: controller,
         onChanged: onChanged,
         keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
