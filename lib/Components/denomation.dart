@@ -19,8 +19,9 @@ class _DenominationWidgetState extends State<DenominationWidget> {
     "100_note",
     "50_note",
     "20_note",
-    "20_coin",
     "10_note",
+    "20_coin",
+    "10_coin",
     "5_coin",
     "2_coin",
     "1_coin",
@@ -35,22 +36,22 @@ class _DenominationWidgetState extends State<DenominationWidget> {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         itemCount: notes.length,
-        separatorBuilder: (context, index) => const SizedBox(height: 18),
+        separatorBuilder: (_, __) => const SizedBox(height: 18),
         itemBuilder: (context, index) {
-          String val = notes[index];
-          final denom = context.watch<GrandTotalProvider>().subTotals[val]!;
+          final key = notes[index];
+          final denom = context.watch<GrandTotalProvider>().subTotals[key]!;
 
           return DenominationRow(
             label: "${denom.value}",
-            countController: TextEditingController(
-              text: denom.count == 0 ? '' : denom.count.toString(),
-            ),
+            initialValue: denom.count == 0 ? "" : denom.count.toString(),
             amount: denom.amount.toStringAsFixed(0),
-            onChanged: (text) {
-              int count = int.tryParse(text) ?? 0;
-              context.read<GrandTotalProvider>().updateCount(val, count);
-            },
             isNote: denom.isNote,
+            onChanged: (text) {
+              context.read<GrandTotalProvider>().updateCount(
+                key,
+                int.tryParse(text) ?? 0,
+              );
+            },
           );
         },
       ),
@@ -60,18 +61,18 @@ class _DenominationWidgetState extends State<DenominationWidget> {
 
 class DenominationRow extends StatelessWidget {
   final String label;
-  final TextEditingController countController;
+  final String initialValue;
   final String amount;
-  final Function(String) onChanged;
   final bool isNote;
+  final Function(String) onChanged;
 
   const DenominationRow({
     super.key,
     required this.label,
-    required this.countController,
+    required this.initialValue,
     required this.amount,
-    required this.onChanged,
     required this.isNote,
+    required this.onChanged,
   });
 
   @override
@@ -93,9 +94,7 @@ class DenominationRow extends StatelessWidget {
             children: [
               if (isNote)
                 const Icon(Icons.payments, color: Colors.white, size: 18),
-
               if (isNote) const SizedBox(width: 6),
-
               Text(
                 label,
                 style: const TextStyle(
@@ -108,7 +107,7 @@ class DenominationRow extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 16),
-        Expanded(child: _field(countController, "Count", true, onChanged)),
+        Expanded(child: _field(initialValue, "Count", true, onChanged)),
         const SizedBox(width: 12),
         Expanded(
           child: Container(
@@ -119,7 +118,7 @@ class DenominationRow extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             child: Text(
-              amount.isEmpty || amount == "0" ? "" : amount,
+              amount == "0" ? "" : amount,
               style: const TextStyle(fontWeight: FontWeight.w600),
             ),
           ),
@@ -129,15 +128,16 @@ class DenominationRow extends StatelessWidget {
   }
 
   Widget _field(
-    TextEditingController controller,
+    String initialValue,
     String hint,
     bool isEnabled,
     Function(String) onChanged,
   ) {
     return SizedBox(
       height: 50,
-      child: TextField(
-        controller: controller,
+      child: TextFormField(
+        initialValue: initialValue,
+        enabled: isEnabled,
         onChanged: onChanged,
         keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],

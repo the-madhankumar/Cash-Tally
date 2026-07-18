@@ -1,4 +1,3 @@
-import 'package:cash_tally/Components/bottom_nav_bar.dart';
 import 'package:cash_tally/Context/context.dart';
 import 'package:cash_tally/Screens/MainPage.dart';
 import 'package:flutter/material.dart';

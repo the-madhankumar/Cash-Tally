@@ -42,10 +42,12 @@ class _MainPageState extends State<MainPage> {
               padding: const EdgeInsets.all(24.0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           "Grand Total",
@@ -61,6 +63,28 @@ class _MainPageState extends State<MainPage> {
                             fontSize: 48,
                             fontWeight: FontWeight.bold,
                             height: 1,
+                          ),
+                        ),
+                        SizedBox(height: 40),
+                        SizedBox(
+                          height: 50,
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              context.read<GrandTotalProvider>().clear();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                              "Reset",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                         ),
                       ],

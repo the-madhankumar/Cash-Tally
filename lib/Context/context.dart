@@ -12,9 +12,11 @@ class GrandTotalProvider extends ChangeNotifier {
     "50_note": Denom(note: "50", value: 50, isNote: true),
 
     "20_note": Denom(note: "20", value: 20, isNote: true),
-    "20_coin": Denom(note: "20", value: 20, isNote: false),
-
     "10_note": Denom(note: "10", value: 10, isNote: true),
+
+    "20_coin": Denom(note: "20", value: 20, isNote: false),
+    "10_coin": Denom(note: "10", value: 10, isNote: false),
+
     "5_coin": Denom(note: "5", value: 5, isNote: false),
     "2_coin": Denom(note: "2", value: 2, isNote: false),
     "1_coin": Denom(note: "1", value: 1, isNote: false),
@@ -109,6 +111,8 @@ class GrandTotalProvider extends ChangeNotifier {
   void clear() {
     _expected = 0;
     _upiAmount = 0;
+
+    upiAmounts.clear();
 
     for (final denom in _subTotals.values) {
       denom.count = 0;
